@@ -8,6 +8,7 @@ import Cart from "../pages/Main/Cart";
 import Home from "../pages/Main/Home";
 import TopRated from "../pages/Main/TopRated";
 import WishList from "../pages/Main/WishList";
+import EditProduct from "../pages/Dashboard/EditProduct";
 
 const routes = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ const routes = createBrowserRouter([
       {
         path: "add-product",
         element: <AddProduct />,
+      },
+      {
+        path: "edit-product/:id",
+        element: <EditProduct />,
       },
     ],
   },

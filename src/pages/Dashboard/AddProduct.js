@@ -1,36 +1,31 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { addProduct, togglePostSuccess } from "../../features/products/productsSlice";
+import { useAddProductMutation } from "../../features/api/apiSlice";
 import { toast } from "react-hot-toast";
 
 const AddProduct = () => {
   const { register, handleSubmit, reset } = useForm();
-
-  const { isLoading, postSuccess, error, isError } = useSelector(state => state.products)
-
-  const dispatch = useDispatch();
+  const [postProduct, result] = useAddProductMutation();
+  const { isError, isLoading, isSuccess, error } = result;
 
   useEffect(() => {
     if (isLoading) {
-      toast.loading("Posting...", { id: "addProduct" })
+      toast.loading("Adding product", { id: "addProduct" })
     }
-    if (!isLoading && postSuccess) {
-      toast.success("Product Added", { id: "addProduct" });
-      dispatch(togglePostSuccess());
-      reset();
+    if (isSuccess) {
+      toast.success("Successfully Added Product", { id: "addProduct" })
     }
     if (!isLoading && isError) {
       toast.error(error, { id: "addProduct" })
     }
-  }, [isLoading, isError, error, postSuccess, reset])
+  }, [error, isError, isLoading, isSuccess])
 
-
-
+  
   const submit = (data) => {
     const product = {
       model: data.model,
       brand: data.brand,
+      image:data.image,
       status: data.status === "true" ? true : false,
       price: data.price,
       rating: data.rating,
@@ -42,7 +37,8 @@ const AddProduct = () => {
       ],
       spec: [],
     };
-    dispatch(addProduct(product));
+    postProduct(product);
+    reset();
   };
 
   return (
