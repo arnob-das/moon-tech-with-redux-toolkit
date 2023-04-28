@@ -44,7 +44,7 @@ const ProductCard = ({ product }) => {
           </button>
         )}
 
-        {!pathname.includes("cart") && (
+        {(!pathname.includes("cart") && !pathname.includes("wish-list")) && (
           <button
             title='Add to wishlist'
             className='bg-indigo-500  py-1 px-2 rounded-full'

@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ProductCard from "../../components/ProductCard";
 import { useDispatch, useSelector } from "react-redux";
 import { toggle, toggleBrands } from "../../features/filter/filterSlice";
-// import { keyboard } from "@testing-library/user-event/dist/keyboard";
-import { getProducts } from "../../features/products/productsSlice";
+import { useGetProductsQuery } from "../../features/api/apiSlice";
 
 const Home = () => {
-
-  useEffect(() => {
-    dispatch(getProducts())
-  }, []);
-
   const dispatch = useDispatch();
   const stock = useSelector(state => state.filter.stock);
   const keyword = useSelector(state => state.filter.keywords);
   const brands = useSelector(state => state.filter.brands);
-  const { products, isLoading, isError, error } = useSelector(state => state.products);
+
+  // const { data, isError, isLoading, isSuccess, error } = useGetProductsQuery(null, { refetchOnMountOrArgChange: true });
+  // refetching is handled by invalided tags in productApiSlice
+  const { data, isError, isLoading, isSuccess, error } = useGetProductsQuery();
+
+  const products = data?.data;
+
+  console.log(error?.data);
 
   let content;
 
@@ -24,16 +25,18 @@ const Home = () => {
   }
 
   if (isError) {
-    content = <h1>{error}</h1>;
+    content = <h1>{error?.error}</h1>;
   }
 
   // if products exist
-  if (products.length) {
+  if (isSuccess && products.length) {
     content = products.map((product) => (
       <ProductCard key={product.model} product={product} />
     ))
   }
-  if (products.length && (stock || brands.length || keyword)) {
+
+
+  if ((isSuccess && products.length) && (stock || brands.length || keyword)) {
     content = products
       .filter((product) => {
         if (stock) {
